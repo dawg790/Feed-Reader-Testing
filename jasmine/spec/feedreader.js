@@ -28,21 +28,23 @@ $(function() {
          it('has URLs defined', function() {
             // Loop through all indexes of the allFeeds variable
             for (var i = 0; i < allFeeds.length; i++) {
-                // First we check that the url property is defined
-                expect(allFeeds[i].url).toBeDefined();
+                var url = allFeeds[i].url;
+                // First we check that the url property is defined as a string
+                expect(typeof url).toBe("string");
                 // Second, we check that the url property content is not blank
-                expect(allFeeds[i].url).not.toBe('');
-            };
+                expect(url.length > 0).toBe(true);
+            }
          });
 
          it('has a name defined', function() {
             // Loop through all indexes of the allFeeds variable
             for (var i = 0; i < allFeeds.length; i++) {
-                // First we check that the name property is defined
-                expect(allFeeds[i].name).toBeDefined();
+                var name = allFeeds[i].name;
+                // First we check that the name property is defined as a string
+                expect(typeof name).toBe("string");
                 // Second, we check that the name property content is not blank
-                expect(allFeeds[i].name).not.toBe('');
-            };
+                expect(name.length > 0).toBe(true);
+            }
          });
     });
 
@@ -58,11 +60,11 @@ $(function() {
 
           it('is shown and hidden when the icon is clicked', function() {
             // When we trigger a button click, the menu-hidden class should not be present on the body element
-            $('.menu-icon-link').trigger('click');
+            $('.menu-icon-link').click();
             expect($('body').hasClass('menu-hidden')).toBe(false);
 
             // When we trigger a second click, the menu-hidden class should be present on the body element
-            $('.menu-icon-link').trigger('click');
+            $('.menu-icon-link').click();
             expect($('body').hasClass('menu-hidden')).toBe(true);
           });
     });
@@ -77,12 +79,11 @@ $(function() {
             loadFeed(0, done);
         });
 
-        it('should successfully load entries from the API', function(done) {
+        it('should successfully load entries from the API', function() {
             /* After the loadFeed function has run we should have feed entries added to the page in the form of
              * elements with a .entry class.
              */
             expect($('.feed .entry')).toBeDefined();
-            done();
         });
     });
 
@@ -91,19 +92,23 @@ $(function() {
      */
     describe('New Feed Selection', function() {
 
-         // Store the value of a feed entry's content before simulating running loadFeed again.
+         // Store the value of the first feed's html globally so it's available in our it function.
          var contentBefore;
 
          beforeEach(function(done) {
-            // We use the first index so that we can compare two different feeds
-            loadFeed(1, done);
-            contentBefore = $('.entry h2').text();
+            // Load a feed and store it's HTML to contentBefore
+            loadFeed(1, function() {
+                contentBefore = $('.feed').html();
+            });
+
+            // Load a second feed so we can use it to compare - then call done();
+            loadFeed(0, done);
+
          });
 
-         it('has updated the feed contents', function(done) {
+         it('has updated the feed contents', function() {
             // Compare the two different feeds' content, they should not be the same.
-            expect($('.entry h2').text()).not.toBe(contentBefore);
-            done();
+            expect($('.feed').html()).not.toBe(contentBefore);
          });
 
     });
